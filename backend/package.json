@@ -1,0 +1,14 @@
+{
+  "name": "simple-auth-app",
+  "version": "1.0.0",
+  "description": "Simple login app with Node.js, Express, and MongoDB",
+  "main": "./server.js",
+  "scripts": {
+    "start": "node ./server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1"
+  }
+}
