@@ -16,16 +16,16 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: nanajanashia/k8s-demo-app:v1.0
+        image: asifkhan131/asif_new_node:latest
         ports:
         - containerPort: 3000
         env:
-        - name: USER_NAME
+        - name: MONGO_ASIF_USERNAME
           valueFrom:
             secretKeyRef:
               name: mongo-secret
               key: mongo-user
-        - name: USER_PWD
+        - name: MONGO_ASIF_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mongo-secret

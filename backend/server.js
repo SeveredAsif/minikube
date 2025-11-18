@@ -67,6 +67,10 @@ const User = mongoose.model('User', UserSchema);
  * Registers a new user.
  * Body: { "username": "...", "password": "..." }
  */
+
+app.get('/',async(req,res)=>{
+    res.status(201).json("hello world");
+})
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
@@ -141,6 +145,6 @@ app.post('/login', async (req, res) => {
 
 // --- 5. START SERVER ---
 
-app.listen(PORT, () => {
+app.listen(PORT,'0.0.0.0', () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
