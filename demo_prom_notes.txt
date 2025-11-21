@@ -1,0 +1,86 @@
+npm install prom-client
+
+const client = require('prom-client');
+const register = client.register;
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+
+//for node exporter i need this service monitor 
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: node-exporter-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-exporter
+  endpoints:
+  - port: metrics
+    interval: 30s
+
+
+Step 1: kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/releases/latest/download/bundle.yaml
+for operator 
+
+2. prometheus.yaml 
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: demo-prometheus
+  namespace: monitoring
+spec:
+  replicas: 1
+  serviceMonitorSelector:
+    matchLabels:
+      team: backend
+  resources:
+    requests:
+      memory: 400Mi
+      cpu: 200m
+kubectl apply -f prometheus.yaml
+
+3. kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/main/manifests/node-exporter-serviceMonitor.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/kube-prometheus/main/manifests/kube-state-metrics-serviceMonitor.yaml
+
+service monitors import 
+
+4. deploying grafana 
+kubectl apply -f https://raw.githubusercontent.com/grafana/helm-charts/main/charts/grafana/templates/deployment.yaml
+
+5. apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+  labels:
+    app: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+    spec:
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: node-exporter
+          image: prom/node-exporter:latest
+          ports:
+            - containerPort: 9100
+              hostPort: 9100
+          securityContext:
+            privileged: true
+          args:
+            - --path.rootfs=/
+
+node exporter kind 
